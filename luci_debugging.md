@@ -57,3 +57,43 @@ To permanently disable the menu cache for development purposes, (lua style) comm
 luci.dispatcher.indexcache = "/tmp/luci-indexcache" in /www/cgi-bin/luci .
 
     --luci.dispatcher.indexcache = "/tmp/luci-indexcache"
+
+
+Commotion_helpers logger
+-----------------------
+
+Commotion helpers includes a logging function that is useful for basic debugging. 
+
+    require "commotion_helpers"
+	log("This is a thing to output")
+
+The logging output is sent to logread.
+
+	# logread
+	user.notice luci: This is a thing to output
+
+The current logger also does tables:
+
+	log({a=1})
+	
+	user.notice luci: {
+    user.notice luci: a
+    user.notice luci: :
+    user.notice luci: 1
+    user.notice luci: }
+
+If you want to capture just the luci logger output you can use grep to capture "luci" lines only. When combined with tail this can be a powerful way of watching your program.
+
+    # logread -f |grep luci
+
+Line-by-line Call trace
+------------------------
+
+There is a "luci.debug" module, it was originally intended to trace the
+memory usage of functions but it can also generate a line-by-line call
+trace. Use it this way:
+
+    require "luci.debug".trap_memtrace("l", "/tmp/trace")   -- (L, not one)
+
+This should create a file /tmp/trace on each invocation. This is much more comprehensive than the normal log debugging and what Lua offers in its debug api. There is no interactive debugger like gdb as far as I know.
+

@@ -1,0 +1,92 @@
+
+===============HTML Page==============================
+Note: you will need to define your error div class
+======================================================
+<form method="post" action="<%=REQUEST_URI%>"
+enctype="multipart/form-data">
+<div id="zone-content-wrapper">
+  <div id="zone-content">
+    <div class="error"><%=error%></div>
+    <div class="cbi-value">
+      <label class="cbi-value-title tippable" data-tip="<%:Click on the
+field below to upload a file.%>"><%:Upload%></label>
+      <input type="file" name="input-name" id="media" />
+      <div class="upload-description">
+        <%:Upload%> a file here, the text said helpfully
+      </div>
+    </div>
+  </div>
+</div>
+<input type="submit" name="input-name" value="submit">
+</form>
+========================Controller File===========
+
+==================================================
+
+function index()
+   entry({"admin", "uploader"}, call("uploader"))
+end
+
+--Uploader calls the file uploader and checks if the file is a correct
+config.
+function uploader()
+   local error = nil	
+   --add your defaults (file_name is optional btw)
+   file_loc = "/place/to/save/file/"
+   input_field = "input-name"
+   file_name = "default name"
+   --actually call the file handler
+   --get the values from the forms on the page
+   local values = luci.http.formvalue()
+   --get the value of the input field
+   local ul = values[input_field]
+   --make sure something is being uploaded
+   if ul ~= '' and ul ~= nil then
+	  --Start your uploader
+	  setFileHandler(file_loc, input_field, file_name)
+	  --Run whatever check you need against the file to make sure it is
+accurate. Return nil if all is ok. (this function not included in this
+mini-tutorial)
+	  error = checkFile(file_loc)
+   end
+   luci.template.render("admin/uploader", {error=error})
+end
+
+--setFileHandler (stolen from sysUpgrade)
+--location: (string) The full path to where the file should be saved.
+--input_name: (string) The name specified by the input html field.
+<input type="submit" name="input_name_here" value="whatever you want"/>
+--file_name: (string, optional) The optional name you would like the
+file to be saved as. If left blank the file keeps its uploaded name.
+function setFileHandler(location, input_name, file_name)
+	  local sys = require "luci.sys"
+	  local fs = require "luci.fs"
+	  local fp
+	  luci.http.setfilehandler(
+		 function(meta, chunk, eof)
+		 if not fp then
+			--make sure the field name is the one we want
+			if meta and meta.name == input_name then
+			   --use the file name if specified
+			   if file_name ~= nil then
+				  fp = io.open(location .. file_name, "w")
+			   else
+				  fp = io.open(location .. meta.file, "w")
+			   end
+			end
+		 end
+		 --actually do the uploading.
+		 if chunk then
+			fp:write(chunk)
+		 end
+		 if eof then
+			fp:close()
+		 end
+		 end)
+end
+
+================================================
+
+So, there you go. That should get you 85% of the way there. Since it is
+pulled from a few places and sanitized to be generic there may be a bug
+or two you have to find when making it work for your page.
