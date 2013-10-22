@@ -82,7 +82,7 @@ The current logger also does tables:
     user.notice luci: 1
     user.notice luci: }
 
-If you want to capture just the luci logger output you can use grep to capture "luci" lines only. When combined with tail this can be a powerful way of watching your program.
+If you want to capture just the luci logger output you can grep for only "luci" lines. When combined with tail this can be a powerful way of watching your program.
 
     # logread -f |grep luci
 
