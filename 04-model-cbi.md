@@ -1,3 +1,9 @@
+CBI Basics
+===========
+
+See: example_cbi.lua or http://luci.subsignal.org/trac/wiki/Documentation/ModulesHowTo#CBImodels where I stole it directly from.
+
+
 CBI: How to filter based in the value of an option
 ---------------------------------------------------
 
@@ -280,4 +286,3 @@ This bit of code needs "s" to be a section from either a SimpleForm or a Map
 	function btn.write()
 	luci.sys.call("/usr/bin/script.sh")
 	end
-																							 

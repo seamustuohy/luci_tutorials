@@ -1,15 +1,14 @@
-Executing a LuCI command from the Linux shell
---------------------------------------------
+The Index and Entry's
+=====================
 
-Note:
--l     Used to load the module
--e    Executes some lua script
+See: example & guide in example/empty_controller.lua & example/guide_controller.lua
 
-root@OpenWrt:~# lua -lluci.sys -e 'print(luci.sys.sysinfo())'
+Making a controller
+--------------------
 
-Config file for init-scripts and dependences
---------------------------------------------
-/etc/config/unitrack
+For existing Controller tutorial go to:
+
+    http://luci.subsignal.org/trac/wiki/Documentation/ModulesHowTo
 
 Enabling / Disabling Authentication
 -----------------------------------

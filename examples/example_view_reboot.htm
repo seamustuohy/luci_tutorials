@@ -1,0 +1,57 @@
+<%#
+
+   NOTE: per the tutorial controller this file would live in
+   /usr/lib/lua/luci/view/example_view_reboot.htm
+   
+LuCI - Lua Configuration Interface
+Copyright 2008 Steven Barth <steven@midlink.org>
+Copyright 2008 Jo-Philipp Wich <xm@leipzig.freifunk.net>
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+$Id$
+
+-%>
+
+<%-
+   --use commotion helpers check_https function to force https on reboot page
+   require "commotion_helpers" --What am I doing wrong here? How would you fix it?
+   check_https("/admin/", luci.http.getenv())
+   --reboot is an admin page so we are good passing it the '/admin/' node. Look at the parsing_constants page and tell me how we would do this if it was not an admin node.
+-%> 
+
+<%+header%> <!--This populates the page with the html in /usr/lib/lua/luci/view/themes/[CURRENT THEME]/header.htm -->
+
+<h2><a id="content" name="content"><%:System%></a></h2>
+
+<h3><%:Reboot%><!--The word Reboot is within 'translation tags that mark it as translatable language for the i18n system to parse and attempt translation on if it is not in the original language. --></h3>
+
+<p><%:Reboots the operating system of your device%></p>
+
+<%-
+local c = require("luci.model.uci").cursor():changes() --find me the API for this function
+   --Why is there a period between require(..) and cursor and a colon between cursor() and changes?
+if c and next(c) then --What is going on here? Did I document this in the Lua section?
+   --If not, go put it in the right section and push to the repo. Then clean this comment out.
+-%> <!-- This is an example of inline luci code being called to start an optional section-->
+
+<p class="warning"><%:Warning: There are unsaved changes that will be lost while rebooting!%></p>  --Find the css for this class and tell us where it is so we can look at it.
+
+<%-
+end 
+if not reboot then 
+-%> <!-- Here the 'end' of the earlier function is called, and a new conditional section is started.  -->
+<p><a href="<%=controller%>/admin/system/reboot?reboot=1"><%:Perform reboot%></a></p>
+<%- else -%>
+
+<p><%:Please wait: Device rebooting...%></p>
+<script type="text/javascript">setTimeout("location='<%=controller%>/admin'", 60000)</script> <!--This is how we do "waiting" pages currently. Think about a better way for our upcoming UI review. -->
+
+<%- end -%> <!--Is there a way to do this without the dashes? What would we have to do to make it work? --> 
+
+<%+footer%> <!--This populates the html found in /usr/lib/lua/luci/view/themes/[CURRENT THEME]/footer.htm -->
+
