@@ -1,3 +1,17 @@
+
+How do I find help with this odd problem I am facing?
+------------------------------------------------------
+
+Google search for the following (where THING is the thing you are trying to figure out). This will search the LuCI listserv and openwrt forum, which have a ton of helpful tips, etc hidden throughout.
+
+    THING site:https://lists.subsignal.org/pipermail/luci/
+	THING luci site:https://forum.openwrt.org/
+
+You can also search the LuCI and nixio API's for technical terms that might show you a existing function in a library you have not looked in.
+
+	THING site:http://luci.subsignal.org/api/
+	
+
 Recreate and get Lua error debugging output on the command line. 
 --------------------------
 
