@@ -184,11 +184,9 @@ Schema
 ------
 
 option type
-
     one of { "enum", "lazylist", "list", "reference", "variable" }
 
 option datatype
-
     one of {"Integer", "Boolean", "String"}
 
 
@@ -286,3 +284,114 @@ This bit of code needs "s" to be a section from either a SimpleForm or a Map
 	function btn.write()
 	luci.sys.call("/usr/bin/script.sh")
 	end
+
+
+CBI Form Values
+----------------
+The parse functions for various CBI objects contain checks for various form_values. These values are used as conditionals for a variety of tasks. I will go over the values here and the conditions that cause them.
+
+* FORM_NODATA
+If on parse a http.formvalue() does not contain a "cbi.submit" value
+
+* FORM_PROCEED =  0
+Optional and dynamic options when parsed have a "proceed" option that will let the deligator or dispatcher know that when a optional value is parsed that does not exist, or a dynamic value has confirmed it has added the dynamic options to proceed to processing the rest of the CBI object.
+
+* FORM_VALID   =  1
+Set when a form has data and is neither invalid, or marked to proceed, and has not changed.
+
+* FORM_DONE	 =  1
+Set when the formvalue "cbi.cancel" is returned from a page and if the "on_cancel" hook function returns true. This is usually the second thing parsed on a form after "skip"
+
+* FORM_INVALID = -1
+Set if a form has been submitted without the .save variable set, or if a error has been raised by a validation function on a option or section.
+
+* FORM_CHANGED =  2
+This value gets set if a formvalue has changed from the value in the uci config file and was written to that uci value.
+
+* FORM_SKIP    =  4
+If on parse a http.formvalue() contains a "cbi.skip" value
+
+CBI: Applying Values
+--------------------
+When the dispatcher loads a map it sets a value that is parsed by the cbi template map which, if an apply is needed will include the apply_xhr.htm template in itself. This calls the action_restart value (in an ingenious use of luci.dispatcher.build_url) passing it the configuration list.
+
+This calls the Cursor.apply() method from luci/model/uci.lua file. As  a result, external script /sbin/luci-reload is invoked. (You will need to read this page http://wiki.openwrt.org/doc/devel/config-scripting if you want to explore this script with any real understanding. This script iterates through the /etc/config/ucitrack file and grabs the init and exec options for each config value passed to it. It then runs all the init scripts and executes all the executable commands. While doing this it mimics the commands it runs back to the user using some on-page XHR.
+
+
+CBI: Map attributres
+--------------------
+
+You can call these as such
+    m = Map("network", "title", "description" {attribute=true})
+
+* apply_on_parse
+Runs uci:apply on all objects after the on_before_apply chain is run. This skips the normal process of having the rendering of the map in the dispatcher apply values. (see:Applying Values)
+
+* commit_handler
+A function that is run at the end of the self.save chain of events. (see: parsing CBI values)
+
+TODO: Test this to see what negative impacts it may have.
+TODO: see if you can set apply_on_parse=false in a on_before_apply command to not have to use apply_xhr.htm
+?TODO: replace apply_xhr in the map.htm to show a better application setting configuration to the user? 
+
+Parsing CBI Values
+-------------------
+The order of parsing a CBI value is is as such.
+
+1) "on_parse"
+2) If the formvalue of "cbi.skip"
+a) FORM_SKIP activated (see: The CBI call and "on_changed_to" and "on_succes_to")
+3) if "save" (this means you have clicked the save button or set the .save value to true)
+3a) "on_save"
+3b) "on_before_save"
+3c) uci:save
+3d) "on_after_save"
+3e1)If not in a deligator (see CBI Form Value) or if "cbi.apply" has been set (You clicked the save and apply button)
+3e2) "on_before_commit"
+3e3) actually commit everything
+3e4) "on_commit"
+3e5) "on_after_commit"
+3e6) "on_before_apply"
+3e7) if apply_on_parse
+3e7a) apply on all values
+3e7b) "on_apply"
+3e7c) "on_after_apply"
+TODO: Finish showing the application parsing
+3e8) set apply_needed for map to parse (see:Applying Values)
+3f) run any commit_handler functions that a map has on it . (see: CBI: Map attributres)
+
+Special CBI Value Types
+----------------
+
+--[[
+TextValue - A multi-line value
+	rows:	Rows
+	template
+]]--
+TextValue = class(AbstractValue)
+
+--[[
+Button
+		inputstyle
+		rmempty
+		template
+]]--
+Button = class(AbstractValue)
+
+--[[
+FileUpload
+		template
+		upload_fields
+		formcreated
+		formvalue
+		remobe
+		
+]]--
+FileUpload = class(AbstractValue)
+
+
+--[[
+FileBrowser
+		template
+]]--
+FileBrowser = class(AbstractValue)
