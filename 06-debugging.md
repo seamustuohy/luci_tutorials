@@ -111,3 +111,20 @@ trace. Use it this way:
 
 This should create a file /tmp/trace on each invocation. This is much more comprehensive than the normal log debugging and what Lua offers in its debug api. There is no interactive debugger like gdb as far as I know.
 
+
+Debugging in the Development Environment
+=======================================
+
+Logging
+-----------------
+Since you will not be able to run logread at the same time as running the develoment environement you will need to send your logging to the standard error of the development environment itself. To do this you will want to use luci util's dumptable  and perror functions.
+
+local util = require "luci.util"
+
+if type(logged_item) == "table" then
+   util.dumptable(logged_item)
+else
+   util.perror(logged_item)
+end
+
+

@@ -43,7 +43,19 @@ If set this will cause a CBI page to be rendered without the CBI header (which c
 If set this will cause a CBI page to be rendered without the CBI footer (which contains the CBI submission buttons) and without the OpenWRT Theme footer. 
 
 * autoapply
-	
+
+* hideresetbtn
+Hide the reset button on the footer
+
+* hideapplybtn
+Hide the apply button on the footer
+
+* hidesavebtn
+hide the save button on the footer
+
+* skip
+Add the skip button on the footer (really only useful if you are making a flow/deligator based config.)
+
 Enabling / Disabling Authentication
 -----------------------------------
 

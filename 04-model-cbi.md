@@ -15,6 +15,13 @@ For example: to be able to display interfaces based on the "proto" option
         return self.map:get(section, "proto") ~= "gre"    <---- here is the magic
 	end
 
+CBI: A simple dummy section header without making a new section (aka using the nullsection template)
+----------------------------------
+
+dv = s:option(DummyValue, "_dummy", translate("Section title?"), translate("I say things about stuff."))
+dv.template = "cbi/nullsection"
+
+	
 CBI: Validating all options on a page
 ====================================
 
@@ -395,3 +402,318 @@ FileBrowser
 		template
 ]]--
 FileBrowser = class(AbstractValue)
+
+
+TO DEFINE:
+------------
+* self.override_scheme
+
+found in:
+modules/niu/luasrc/model/cbi/niu/network/etherwan.lua
+modules/niu/luasrc/model/cbi/niu/network/wlanwan.lua
+applications/luci-olsr/luasrc/model/cbi/olsr/olsrdplugins.lua
+libs/web/luasrc/cbi.lua
+
+example:
+p = s:taboption("general", ListValue, "proto", translate("Connection Protocol"))
+p.override_scheme = true
+p.default = "dhcp"
+p:value("dhcp", translate("Cable / Ethernet / DHCP"))
+if has_pppoe then p:value("pppoe", "DSL / PPPoE")   end
+if has_pppoa then p:value("pppoa", "PPPoA")   end
+if has_pptp  then p:value("pptp",  "PPTP")    end
+p:value("static", translate("Static Ethernet"))
+
+
+* self.href
+DummyValue : found in the html file called
+
+* self.inputstyle
+Button : found in html file
+
+
+
+Delegator TODO
+-------------
+--[[
+Delegator - Node controller
+]]--
+Delegator = class(Node)
+function Delegator.__init__(self, ...)
+	Node.__init__(self, ...)
+	self.nodes = {}
+	self.defaultpath = {}
+	self.pageaction = false
+	self.readinput = true
+	self.allow_reset = false
+	self.allow_cancel = false
+	self.allow_back = false
+	self.allow_finish = false
+	self.template = "cbi/delegator"
+end
+
+function Delegator.set(self, name, node)
+	assert(not self.nodes[name], "Duplicate entry")
+
+	self.nodes[name] = node
+end
+
+function Delegator.add(self, name, node)
+	node = self:set(name, node)
+	self.defaultpath[#self.defaultpath+1] = name
+end
+
+function Delegator.insert_after(self, name, after)
+	local n = #self.chain + 1
+	for k, v in ipairs(self.chain) do
+		if v == after then
+			n = k + 1
+			break
+		end
+	end
+	table.insert(self.chain, n, name)
+end
+
+function Delegator.set_route(self, ...)
+	local n, chain, route = 0, self.chain, {...}
+	for i = 1, #chain do
+		if chain[i] == self.current then
+			n = i
+			break
+		end
+	end
+	for i = 1, #route do
+		n = n + 1
+		chain[n] = route[i]
+	end
+	for i = n + 1, #chain do
+		chain[i] = nil
+	end
+end
+
+function Delegator.get(self, name)
+	local node = self.nodes[name]
+
+	if type(node) == "string" then
+		node = load(node, name)
+	end
+
+	if type(node) == "table" and getmetatable(node) == nil then
+		node = Compound(unpack(node))
+	end
+
+	return node
+end
+
+function Delegator.parse(self, ...)
+	if self.allow_cancel and Map.formvalue(self, "cbi.cancel") then
+		if self:_run_hooks("on_cancel") then
+			return FORM_DONE
+		end
+	end
+
+	if not Map.formvalue(self, "cbi.delg.current") then
+		self:_run_hooks("on_init")
+	end
+
+	local newcurrent
+	self.chain = self.chain or self:get_chain()
+	self.current = self.current or self:get_active()
+	self.active = self.active or self:get(self.current)
+	assert(self.active, "Invalid state")
+
+	local stat = FORM_DONE
+	if type(self.active) ~= "function" then
+		self.active:populate_delegator(self)
+		stat = self.active:parse()
+	else
+		self:active()
+	end
+
+	if stat > FORM_PROCEED then
+		if Map.formvalue(self, "cbi.delg.back") then
+			newcurrent = self:get_prev(self.current)
+		else
+			newcurrent = self:get_next(self.current)
+		end
+	elseif stat < FORM_PROCEED then
+		return stat
+	end
+
+
+	if not Map.formvalue(self, "cbi.submit") then
+		return FORM_NODATA
+	elseif stat > FORM_PROCEED
+	and (not newcurrent or not self:get(newcurrent)) then
+		return self:_run_hook("on_done") or FORM_DONE
+	else
+		self.current = newcurrent or self.current
+		self.active = self:get(self.current)
+		if type(self.active) ~= "function" then
+			self.active:populate_delegator(self)
+			local stat = self.active:parse(false)
+			if stat == FORM_SKIP then
+				return self:parse(...)
+			else
+				return FORM_PROCEED
+			end
+		else
+			return self:parse(...)
+		end
+	end
+end
+
+function Delegator.get_next(self, state)
+	for k, v in ipairs(self.chain) do
+		if v == state then
+			return self.chain[k+1]
+		end
+	end
+end
+
+function Delegator.get_prev(self, state)
+	for k, v in ipairs(self.chain) do
+		if v == state then
+			return self.chain[k-1]
+		end
+	end
+end
+
+function Delegator.get_chain(self)
+	local x = Map.formvalue(self, "cbi.delg.path") or self.defaultpath
+	return type(x) == "table" and x or {x}
+end
+
+function Delegator.get_active(self)
+	return Map.formvalue(self, "cbi.delg.current") or self.chain[1]
+end
+
+
+SimpleForm TODO
+---------------
+--[[
+SimpleForm - A Simple non-UCI form
+]]--
+SimpleForm = class(Node)
+
+function SimpleForm.__init__(self, config, title, description, data)
+	Node.__init__(self, title, description)
+	self.config = config
+	self.data = data or {}
+	self.template = "cbi/simpleform"
+	self.dorender = true
+	self.pageaction = false
+	self.readinput = true
+end
+
+SimpleForm.formvalue = Map.formvalue
+SimpleForm.formvaluetable = Map.formvaluetable
+
+function SimpleForm.parse(self, readinput, ...)
+	self.readinput = (readinput ~= false)
+
+	if self:formvalue("cbi.skip") then
+		return FORM_SKIP
+	end
+
+	if self:formvalue("cbi.cancel") and self:_run_hooks("on_cancel") then
+		return FORM_DONE
+	end
+
+	if self:submitstate() then
+		Node.parse(self, 1, ...)
+	end
+
+	local valid = true
+	for k, j in ipairs(self.children) do
+		for i, v in ipairs(j.children) do
+			valid = valid
+			 and (not v.tag_missing or not v.tag_missing[1])
+			 and (not v.tag_invalid or not v.tag_invalid[1])
+			 and (not v.error)
+		end
+	end
+
+	local state = not self:submitstate() and FORM_NODATA
+		or valid and FORM_VALID
+		or FORM_INVALID
+
+	self.dorender = not self.handle
+	if self.handle then
+		local nrender, nstate = self:handle(state, self.data)
+		self.dorender = self.dorender or (nrender ~= false)
+		state = nstate or state
+	end
+	return state
+end
+
+function SimpleForm.render(self, ...)
+	if self.dorender then
+		Node.render(self, ...)
+	end
+end
+
+function SimpleForm.submitstate(self)
+	return self:formvalue("cbi.submit")
+end
+
+function SimpleForm.section(self, class, ...)
+	if instanceof(class, AbstractSection) then
+		local obj  = class(self, ...)
+		self:append(obj)
+		return obj
+	else
+		error("class must be a descendent of AbstractSection")
+	end
+end
+
+-- Creates a child field
+function SimpleForm.field(self, class, ...)
+	local section
+	for k, v in ipairs(self.children) do
+		if instanceof(v, SimpleSection) then
+			section = v
+			break
+		end
+	end
+	if not section then
+		section = self:section(SimpleSection)
+	end
+
+	if instanceof(class, AbstractValue) then
+		local obj  = class(self, section, ...)
+		obj.track_missing = true
+		section:append(obj)
+		return obj
+	else
+		error("class must be a descendent of AbstractValue")
+	end
+end
+
+function SimpleForm.set(self, section, option, value)
+	self.data[option] = value
+end
+
+
+function SimpleForm.del(self, section, option)
+	self.data[option] = nil
+end
+
+
+function SimpleForm.get(self, section, option)
+	return self.data[option]
+end
+
+
+function SimpleForm.get_scheme()
+	return nil
+end
+
+
+Form = class(SimpleForm)
+
+function Form.__init__(self, ...)
+	SimpleForm.__init__(self, ...)
+	self.embedded = true
+end
+
