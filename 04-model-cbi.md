@@ -166,11 +166,17 @@ Save & Apply Hooks
 LuCI Trunk and the 0.9 branch offer hooks for that:
 
 on_init	   Before rendering the model
+
 on_parse  Before writing the config
+
 on_before_commit		  Before writing the config
+
 on_after_commit		  After writing the config
+
 on_before_apply		  Before restarting services
+
 on_after_apply		  After restarting services
+
 on_cancel			  When the form was cancelled
 
 Use them like this:
@@ -277,9 +283,13 @@ value is not set in the model, but in the controller entry for that page.
 The options are: skip, autoapply, hidesavebtn, hideresetbtn, and hideapplybtn 
 
 skip: If true ADD the skip button.
+
 autoapply: if true (and hideapplybtn not true) HIDE submit button.
+
 hideapplybtn: if true (and autoapply not true) HIDE submit button.
+
 hidesavebtn: If true HIDE the save button
+
 hideresetbtn: if true HIDE the reset button.
 
 
