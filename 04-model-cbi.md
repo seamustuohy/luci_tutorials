@@ -165,22 +165,23 @@ Save & Apply Hooks
 
 LuCI Trunk and the 0.9 branch offer hooks for that:
 
-on_init	   Before rendering the model
+**on_init**	   Before rendering the model
 
-on_parse  Before writing the config
+**on_parse**  Before writing the config
 
-on_before_commit		  Before writing the config
+**on_before_commit**		  Before writing the config
 
-on_after_commit		  After writing the config
+**on_after_commit**		  After writing the config
 
-on_before_apply		  Before restarting services
+**on_before_apply**		  Before restarting services
 
-on_after_apply		  After restarting services
+**on_after_apply**		  After restarting services
 
-on_cancel			  When the form was cancelled
+**on_cancel**			  When the form was cancelled
 
 Use them like this:
 
+```
     m = Map("foo", ...)
     m.on_after_commit = function(self)
         -- all written config names are in self.parsechain
@@ -189,33 +190,34 @@ Use them like this:
             -- copy "file" ...
         done
     end
-
+```
 
 
 
 Schema
 ------
 
-option type
-    one of { "enum", "lazylist", "list", "reference", "variable" }
-
-option datatype
-    one of {"Integer", "Boolean", "String"}
+  * option type
+    * one of { "enum", "lazylist", "list", "reference", "variable" }
+  * option datatype
+    * one of {"Integer", "Boolean", "String"}
 
 
 Getting Anonymous UCI Config Data
 ---------------------------------
 When accessing "anonymous" sections via LUA do the following:
 
+```
 local hostname
-
-	luci.model.uci.cursor():foreach("system", "system", function(s) hostname = s.hostname end)
-	print(hostname)
+luci.model.uci.cursor():foreach("system", "system", function(s) hostname = s.hostname end)
+print(hostname)
+```
 
 Since this is often needed, they added a shortcut doing exactly that:
-
-	local hostname = luci.model.uci.cursor():get_first("system", "system", "hostname")
-	print(hostname)
+```
+local hostname = luci.model.uci.cursor():get_first("system", "system", "hostname")
+print(hostname)
+```
 
 See also http://luci.subsignal.org/api/luci/modules/luci.model.uci.html#Cursor.get_first
 
@@ -226,18 +228,21 @@ Enabling / Disabling Authentication
 
 To enable authentication you need to set the sysauth properties on your root-level node:
 
-    x = entry({"myApp"}, template("myApp/overview"), "myApp", 1)
-    x.dependant = false
-    x.sysauth = "root"
-    x.sysauth_authenticator = "htmlauth"
-
+```
+x = entry({"myApp"}, template("myApp/overview"), "myApp", 1)
+x.dependant = false
+x.sysauth = "root"
+x.sysauth_authenticator = "htmlauth"
+```
 (see controller/admin/index.lua)
 
 To make your site the index, use:
 
-    local root = node()
-    root.target = alias("myApp")
-    root.index = true
+```
+local root = node()
+root.target = alias("myApp")
+root.index = true
+```
 
 This should work as long as the name of your app > "admin" due to alphabetical sorting.
 
@@ -247,6 +252,7 @@ Using a template to create custom fields
 
 Create a new view e.g. luasrc/view/cbi_timeval.htm like this
 
+```
     <%+cbi/valueheader%>
 
 	<input type="text" class="cbi-input-text" onchange="cbi_d_update(this.id)"<%= attr("name", cbid .. ".hour") .. attr("id", cbid ..".hour") .. attr("value", (self:cfgvalue(section) or ""):match("(%d%d):%d%d")) %> />
@@ -254,13 +260,19 @@ Create a new view e.g. luasrc/view/cbi_timeval.htm like this
 	<input type="text" class="cbi-input-text" onchange="cbi_d_update(this.id)"<%= attr("name", cbid .. ".min") .. attr("id", cbid ..".min") .. attr("value", (self:cfgvalue(section) or ""):match("%d%d:(%d%d)")) %> />
 
 	<%+cbi/valuefooter%>
+```
 
 Important are the includes at the beggining and the end, and that the id, name and value attributes are correct. The rest can be adapted.
 
-(self:cfgvalue(section) or ""):match(".*:?(.*)") will only match the part of the config value behind the : whereas (self:cfgvalue(section) or ""):match("(.*):?.*") will only match the first part of the real config value.
+```(self:cfgvalue(section) or ""):match(".*:?(.*)") ```
+will only match the part of the config value behind the : 
+whereas 
+```(self:cfgvalue(section) or ""):match("(.*):?.*") ```
+will only match the first part of the real config value.
 
 In your Model do something like this.
 
+```
     somename = s:option(Value, "option", "name") -- or whatever creating a Value
     somename.template = "cbi_timeval"            -- Template name from above
     somename.formvalue = function(self, section) -- This will assemble the parts
@@ -272,7 +284,7 @@ In your Model do something like this.
             return nil
         end
     end
-
+```
 
 Modifying cbi map buttons
 -------------------------
@@ -309,9 +321,9 @@ Save vs Save & Apply
 
 If my custom page only needs to write to /etc/config/myapp.lua but not reboot the router, how do I get ONLY a [Save] button?
 Change the cbi() invocation in your controller to something like this:
-
-	cbi("my/form", {autoapply=true})
-
+```
+cbi("my/form", {autoapply=true})
+```
 
 
 Run  a Script from a Button
@@ -319,36 +331,37 @@ Run  a Script from a Button
 
 This bit of code needs "s" to be a section from either a SimpleForm or a Map
 
-    btn = s:option(Button, "_btn", translate("Click this to run a script"))
+```
+btn = s:option(Button, "_btn", translate("Click this to run a script"))
 
-	function btn.write()
-	luci.sys.call("/usr/bin/script.sh")
-	end
-
+function btn.write()
+    luci.sys.call("/usr/bin/script.sh")
+end
+```
 
 CBI Form Values
 ----------------
 The parse functions for various CBI objects contain checks for various form_values. These values are used as conditionals for a variety of tasks. I will go over the values here and the conditions that cause them.
 
-* FORM_NODATA
+  * FORM_NODATA
 If on parse a http.formvalue() does not contain a "cbi.submit" value
 
-* FORM_PROCEED =  0
+  * FORM_PROCEED =  0
 Optional and dynamic options when parsed have a "proceed" option that will let the deligator or dispatcher know that when a optional value is parsed that does not exist, or a dynamic value has confirmed it has added the dynamic options to proceed to processing the rest of the CBI object.
 
-* FORM_VALID   =  1
+  * FORM_VALID   =  1
 Set when a form has data and is neither invalid, or marked to proceed, and has not changed.
 
-* FORM_DONE	 =  1
+  * FORM_DONE	 =  1
 Set when the formvalue "cbi.cancel" is returned from a page and if the "on_cancel" hook function returns true. This is usually the second thing parsed on a form after "skip"
 
-* FORM_INVALID = -1
+  * FORM_INVALID = -1
 Set if a form has been submitted without the .save variable set, or if a error has been raised by a validation function on a option or section.
 
-* FORM_CHANGED =  2
+  * FORM_CHANGED =  2
 This value gets set if a formvalue has changed from the value in the uci config file and was written to that uci value.
 
-* FORM_SKIP    =  4
+  * FORM_SKIP    =  4
 If on parse a http.formvalue() contains a "cbi.skip" value
 
 CBI: Applying Values
@@ -362,12 +375,12 @@ CBI: Map attributres
 --------------------
 
 You can call these as such
-    m = Map("network", "title", "description" {attribute=true})
+```    m = Map("network", "title", "description" {attribute=true})```
 
-* apply_on_parse
+  * apply_on_parse
 Runs uci:apply on all objects after the on_before_apply chain is run. This skips the normal process of having the rendering of the map in the dispatcher apply values. (see:Applying Values)
 
-* commit_handler
+  * commit_handler
 A function that is run at the end of the self.save chain of events. (see: parsing CBI values)
 
 TODO: Test this to see what negative impacts it may have.
