@@ -268,6 +268,29 @@ In your Model do something like this.
     end
 
 
+Modifying cbi map buttons
+-------------------------
+
+The buttons can be controlled through the "flow" property of a map. This
+value is not set in the model, but in the controller entry for that page.
+
+The options are: skip, autoapply, hidesavebtn, hideresetbtn, and hideapplybtn 
+
+skip: If true ADD the skip button.
+autoapply: if true (and hideapplybtn not true) HIDE submit button.
+hideapplybtn: if true (and autoapply not true) HIDE submit button.
+hidesavebtn: If true HIDE the save button
+hideresetbtn: if true HIDE the reset button.
+
+
+These options are set as bool values in a table. This table is passed as
+the second value of the cbi call.
+
+```
+entry({"admin", "my_page"}, cbi("admin/my_page", {skip=true,
+autoapply=false}), translate("My Page"), 15)
+```
+
 
 Save vs Save & Apply
 --------------------
