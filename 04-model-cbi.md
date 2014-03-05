@@ -282,15 +282,15 @@ value is not set in the model, but in the controller entry for that page.
 
 The options are: skip, autoapply, hidesavebtn, hideresetbtn, and hideapplybtn 
 
-skip: If true ADD the skip button.
+**skip:** If true ADD the skip button.
 
-autoapply: if true (and hideapplybtn not true) HIDE submit button.
+**autoapply:** if true (and hideapplybtn not true) HIDE submit button.
 
-hideapplybtn: if true (and autoapply not true) HIDE submit button.
+**hideapplybtn:** if true (and autoapply not true) HIDE submit button.
 
-hidesavebtn: If true HIDE the save button
+**hidesavebtn:** If true HIDE the save button
 
-hideresetbtn: if true HIDE the reset button.
+**hideresetbtn:** if true HIDE the reset button.
 
 
 These options are set as bool values in a table. This table is passed as
@@ -378,27 +378,27 @@ Parsing CBI Values
 -------------------
 The order of parsing a CBI value is is as such.
 
-1) "on_parse"
-2) If the formvalue of "cbi.skip"
-a) FORM_SKIP activated (see: The CBI call and "on_changed_to" and "on_succes_to")
-3) if "save" (this means you have clicked the save button or set the .save value to true)
-3a) "on_save"
-3b) "on_before_save"
-3c) uci:save
-3d) "on_after_save"
-3e1)If not in a deligator (see CBI Form Value) or if "cbi.apply" has been set (You clicked the save and apply button)
-3e2) "on_before_commit"
-3e3) actually commit everything
-3e4) "on_commit"
-3e5) "on_after_commit"
-3e6) "on_before_apply"
-3e7) if apply_on_parse
-3e7a) apply on all values
-3e7b) "on_apply"
-3e7c) "on_after_apply"
+  1) "on_parse"
+  2) If the formvalue of "cbi.skip"
+  a) FORM_SKIP activated (see: The CBI call and "on_changed_to" and "on_succes_to")
+  3) if "save" (this means you have clicked the save button or set the .save value to true)
+    3a) "on_save"
+    3b) "on_before_save"
+    3c) uci:save
+    3d) "on_after_save"
+      3e1)If not in a deligator (see CBI Form Value) or if "cbi.apply" has been set (You clicked the save and apply button)
+      3e2) "on_before_commit"
+      3e3) actually commit everything
+      3e4) "on_commit"
+      3e5) "on_after_commit"
+      3e6) "on_before_apply"
+      3e7) if apply_on_parse
+        3e7a) apply on all values
+        3e7b) "on_apply"
+        3e7c) "on_after_apply"
 TODO: Finish showing the application parsing
-3e8) set apply_needed for map to parse (see:Applying Values)
-3f) run any commit_handler functions that a map has on it . (see: CBI: Map attributres)
+      3e8) set apply_needed for map to parse (see:Applying Values)
+    3f) run any commit_handler functions that a map has on it . (see: CBI: Map attributres)
 
 Special CBI Value Types
 ----------------
