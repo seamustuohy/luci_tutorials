@@ -378,6 +378,7 @@ Parsing CBI Values
 -------------------
 The order of parsing a CBI value is is as such.
 
+```
   1) "on_parse"
   2) If the formvalue of "cbi.skip"
   a) FORM_SKIP activated (see: The CBI call and "on_changed_to" and "on_succes_to")
@@ -399,43 +400,45 @@ The order of parsing a CBI value is is as such.
 TODO: Finish showing the application parsing
       3e8) set apply_needed for map to parse (see:Applying Values)
     3f) run any commit_handler functions that a map has on it . (see: CBI: Map attributres)
+```
 
-Special CBI Value Types
+Special (rarely used) CBI Value Types
 ----------------
 
---[[
+**TextValue**
+```
 TextValue - A multi-line value
 	rows:	Rows
 	template
-]]--
-TextValue = class(AbstractValue)
 
---[[
-Button
+TextValue = class(AbstractValue)
+```
+
+**Button**
+```
 		inputstyle
 		rmempty
 		template
-]]--
 Button = class(AbstractValue)
+```
 
---[[
-FileUpload
+**FileUpload**
+```
 		template
 		upload_fields
 		formcreated
 		formvalue
 		remobe
 		
-]]--
 FileUpload = class(AbstractValue)
+```
 
-
---[[
-FileBrowser
+**FileBrowser**
+```
 		template
-]]--
-FileBrowser = class(AbstractValue)
 
+FileBrowser = class(AbstractValue)
+```
 
 TO DEFINE:
 ------------
