@@ -1,6 +1,8 @@
 CBI Basics
 ===========
 
+See: https://github.com/elationfoundation/luci-snippets for heavily commented snippets that include documented and undocumented functionality of LuCI CBI objects and functions.
+
 See: example_cbi.lua or http://luci.subsignal.org/trac/wiki/Documentation/ModulesHowTo#CBImodels where I stole it directly from.
 
 
