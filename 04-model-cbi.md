@@ -18,9 +18,10 @@ For example: to be able to display interfaces based on the "proto" option
 CBI: A simple dummy section header without making a new section (aka using the nullsection template)
 ----------------------------------
 
+```
 dv = s:option(DummyValue, "_dummy", translate("Section title?"), translate("I say things about stuff."))
 dv.template = "cbi/nullsection"
-
+```
 	
 CBI: Validating all options on a page
 ====================================
@@ -317,14 +318,15 @@ autoapply=false}), translate("My Page"), 15)
 Save vs Save & Apply
 --------------------
 
-[Save] pushes the change to /etc/config /* and [Save & Apply] does the same plus it calls corresponding init scripts defined in /etc/config/ucitrack .
+**Save** pushes the change to /etc/config /* and **Save & Apply** does the same plus it calls corresponding init scripts defined in /etc/config/ucitrack .
 
-If my custom page only needs to write to /etc/config/myapp.lua but not reboot the router, how do I get ONLY a [Save] button?
-Change the cbi() invocation in your controller to something like this:
+**Q** If my custom page only needs to write to /etc/config/myapp.lua but not reboot the router, how do I get ONLY a **Save** button?
+
+**A** Change the cbi() invocation in your controller to something like this:
+
 ```
 cbi("my/form", {autoapply=true})
 ```
-
 
 Run  a Script from a Button
 ---------------------------
@@ -343,29 +345,36 @@ CBI Form Values
 ----------------
 The parse functions for various CBI objects contain checks for various form_values. These values are used as conditionals for a variety of tasks. I will go over the values here and the conditions that cause them.
 
-  * FORM_NODATA
+**FORM_NODATA** 
+
 If on parse a http.formvalue() does not contain a "cbi.submit" value
 
-  * FORM_PROCEED =  0
+**FORM_PROCEED =  0**
+
 Optional and dynamic options when parsed have a "proceed" option that will let the deligator or dispatcher know that when a optional value is parsed that does not exist, or a dynamic value has confirmed it has added the dynamic options to proceed to processing the rest of the CBI object.
 
-  * FORM_VALID   =  1
+**FORM_VALID   =  1**
+
 Set when a form has data and is neither invalid, or marked to proceed, and has not changed.
 
-  * FORM_DONE	 =  1
+**FORM_DONE	 =  1**
+
 Set when the formvalue "cbi.cancel" is returned from a page and if the "on_cancel" hook function returns true. This is usually the second thing parsed on a form after "skip"
 
-  * FORM_INVALID = -1
+**FORM_INVALID = -1**
+
 Set if a form has been submitted without the .save variable set, or if a error has been raised by a validation function on a option or section.
 
-  * FORM_CHANGED =  2
+**FORM_CHANGED =  2**
+
 This value gets set if a formvalue has changed from the value in the uci config file and was written to that uci value.
 
-  * FORM_SKIP    =  4
+**FORM_SKIP    =  4**
 If on parse a http.formvalue() contains a "cbi.skip" value
 
 CBI: Applying Values
 --------------------
+
 When the dispatcher loads a map it sets a value that is parsed by the cbi template map which, if an apply is needed will include the apply_xhr.htm template in itself. This calls the action_restart value (in an ingenious use of luci.dispatcher.build_url) passing it the configuration list.
 
 This calls the Cursor.apply() method from luci/model/uci.lua file. As  a result, external script /sbin/luci-reload is invoked. (You will need to read this page http://wiki.openwrt.org/doc/devel/config-scripting if you want to explore this script with any real understanding. This script iterates through the /etc/config/ucitrack file and grabs the init and exec options for each config value passed to it. It then runs all the init scripts and executes all the executable commands. While doing this it mimics the commands it runs back to the user using some on-page XHR.
@@ -375,12 +384,14 @@ CBI: Map attributres
 --------------------
 
 You can call these as such
+
 ```    m = Map("network", "title", "description" {attribute=true})```
 
-  * apply_on_parse
+**apply_on_parse**
+
 Runs uci:apply on all objects after the on_before_apply chain is run. This skips the normal process of having the rendering of the map in the dispatcher apply values. (see:Applying Values)
 
-  * commit_handler
+**commit_handler**
 A function that is run at the end of the self.save chain of events. (see: parsing CBI values)
 
 TODO: Test this to see what negative impacts it may have.
@@ -389,6 +400,7 @@ TODO: see if you can set apply_on_parse=false in a on_before_apply command to no
 
 Parsing CBI Values
 -------------------
+
 The order of parsing a CBI value is is as such.
 
 ```
@@ -419,6 +431,7 @@ Special (rarely used) CBI Value Types
 ----------------
 
 **TextValue**
+
 ```
 TextValue - A multi-line value
 	rows:	Rows
@@ -428,6 +441,7 @@ TextValue = class(AbstractValue)
 ```
 
 **Button**
+
 ```
 		inputstyle
 		rmempty
@@ -436,6 +450,7 @@ Button = class(AbstractValue)
 ```
 
 **FileUpload**
+
 ```
 		template
 		upload_fields
@@ -447,6 +462,7 @@ FileUpload = class(AbstractValue)
 ```
 
 **FileBrowser**
+
 ```
 		template
 
@@ -455,15 +471,19 @@ FileBrowser = class(AbstractValue)
 
 TO DEFINE:
 ------------
+
 * self.override_scheme
 
-found in:
-modules/niu/luasrc/model/cbi/niu/network/etherwan.lua
-modules/niu/luasrc/model/cbi/niu/network/wlanwan.lua
-applications/luci-olsr/luasrc/model/cbi/olsr/olsrdplugins.lua
-libs/web/luasrc/cbi.lua
+Found in:
+
+* modules/niu/luasrc/model/cbi/niu/network/etherwan.lua
+* modules/niu/luasrc/model/cbi/niu/network/wlanwan.lua
+* applications/luci-olsr/luasrc/model/cbi/olsr/olsrdplugins.lua
+* libs/web/luasrc/cbi.lua
 
 example:
+
+```
 p = s:taboption("general", ListValue, "proto", translate("Connection Protocol"))
 p.override_scheme = true
 p.default = "dhcp"
@@ -472,21 +492,24 @@ if has_pppoe then p:value("pppoe", "DSL / PPPoE")   end
 if has_pppoa then p:value("pppoa", "PPPoA")   end
 if has_pptp  then p:value("pptp",  "PPTP")    end
 p:value("static", translate("Static Ethernet"))
-
+```
 
 * self.href
+
 DummyValue : found in the html file called
 
 * self.inputstyle
+
 Button : found in html file
 
 
 
 Delegator TODO
 -------------
---[[
-Delegator - Node controller
-]]--
+
+**Delegator - Node controller**
+
+```
 Delegator = class(Node)
 function Delegator.__init__(self, ...)
 	Node.__init__(self, ...)
@@ -636,13 +659,14 @@ end
 function Delegator.get_active(self)
 	return Map.formvalue(self, "cbi.delg.current") or self.chain[1]
 end
-
+```
 
 SimpleForm TODO
 ---------------
---[[
-SimpleForm - A Simple non-UCI form
-]]--
+
+**SimpleForm - A Simple non-UCI form**
+
+```
 SimpleForm = class(Node)
 
 function SimpleForm.__init__(self, config, title, description, data)
@@ -765,4 +789,4 @@ function Form.__init__(self, ...)
 	SimpleForm.__init__(self, ...)
 	self.embedded = true
 end
-
+```
