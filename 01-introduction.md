@@ -4,7 +4,7 @@ Basic LuCI development Info
 
 Model-View-Controller (MVC)
 ---------------------
-MVC is a software design that seperates teh representation of data from the user's interactions with that data. This is the architecture that is used by the LuCI system
+MVC is a software design that seperates the representation of data from the user's interactions with that data. This is the architecture that is used by the LuCI system
 
 LuCI uses the existing UCI configuration files as a model. It uses its own configuration language called CBI to translate the UCI file into the HTML form (view) you see on most pages. It's controller's are a series fo lua scripts that can be found in the main LuCI directory.
 
