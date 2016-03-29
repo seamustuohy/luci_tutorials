@@ -1,3 +1,4 @@
+<p align="right"><a href="05-view.md">05-view.md &larr; </a> | <a href="07-warnings.md">&rarr; 07-warnings.md</a></p>
 
 How do I find help with this odd problem I am facing?
 ------------------------------------------------------
@@ -5,14 +6,14 @@ How do I find help with this odd problem I am facing?
 Google search for the following (where THING is the thing you are trying to figure out). This will search the LuCI listserv and openwrt forum, which have a ton of helpful tips, etc hidden throughout.
 
     THING site:https://lists.subsignal.org/pipermail/luci/
-	THING luci site:https://forum.openwrt.org/
+    THING luci site:https://forum.openwrt.org/
 
 You can also search the LuCI and nixio API's for technical terms that might show you a existing function in a library you have not looked in.
 
-	THING site:http://luci.subsignal.org/api/
-	
+    THING site:http://luci.subsignal.org/api/
 
-Recreate and get Lua error debugging output on the command line. 
+
+Recreate and get Lua error debugging output on the command line.
 --------------------------
 
 create the following script in /www/cgi-bin/luci.dbg and make it executable:
@@ -25,17 +26,17 @@ create the following script in /www/cgi-bin/luci.dbg and make it executable:
 
     for k, v in pairs(nixio.getenv()) do
         dbg:write(string.format("export %s=%q\n", k, v))
-	end
+    end
 
-	dbg:write("/www/cgi-bin/luci\n")
-	dbg:close()
-	nixio.exec("/www/cgi-bin/luci")
+    dbg:write("/www/cgi-bin/luci\n")
+    dbg:close()
+    nixio.exec("/www/cgi-bin/luci")
 
-	Now change the url of the broken page from .../luci/... to .../luci.dbg/... and reload.
+    Now change the url of the broken page from .../luci/... to .../luci.dbg/... and reload.
 
-	The script should create a file "/tmp/luci.req" which you can use to reproduce the same request on the command line:
+    The script should create a file "/tmp/luci.req" which you can use to reproduce the same request on the command line:
 
-	root@OpenWrt:~# sh /tmp/luci.req
+    root@OpenWrt:~# sh /tmp/luci.req
 
 
 Developing on the device
@@ -56,7 +57,7 @@ Compile Time caching (modulecache)
 If you selected to have full source or stripped sourcecode, then there is a run-time option luci.ccache.enable which enables or disables a compile-time cache.  You can disable this cache by doing
 
     uci set luci.ccache.enable=0
-	uci commit luci
+    uci commit luci
 
 or by changing the value to 0 directly in /etc/config/luci.
 
@@ -76,21 +77,21 @@ luci.dispatcher.indexcache = "/tmp/luci-indexcache" in /www/cgi-bin/luci .
 Commotion_helpers logger
 -----------------------
 
-Commotion helpers includes a logging function that is useful for basic debugging. 
+Commotion helpers includes a logging function that is useful for basic debugging.
 
     require "commotion_helpers"
-	log("This is a thing to output")
+    log("This is a thing to output")
 
 The logging output is sent to logread.
 
-	# logread
-	user.notice luci: This is a thing to output
+    # logread
+    user.notice luci: This is a thing to output
 
 The current logger also does tables:
 
-	log({a=1})
-	
-	user.notice luci: {
+    log({a=1})
+
+    user.notice luci: {
     user.notice luci: a
     user.notice luci: :
     user.notice luci: 1
@@ -126,5 +127,3 @@ if type(logged_item) == "table" then
 else
    util.perror(logged_item)
 end
-
-

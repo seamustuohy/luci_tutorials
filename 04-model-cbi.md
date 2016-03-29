@@ -1,3 +1,5 @@
+<p align="right"><a href="03-controller.md">03-controller.md &larr; </a> | <a href="05-view.md">&rarr; 05-view.md</a></p>
+
 CBI Basics
 ===========
 
@@ -15,7 +17,7 @@ For example: to be able to display interfaces based on the "proto" option
     s = m:section(TypedSection, "interface", "")
     function s.filter(self, section)
         return self.map:get(section, "proto") ~= "gre"    <---- here is the magic
-	end
+    end
 
 CBI: A simple dummy section header without making a new section (aka using the nullsection template)
 ----------------------------------
@@ -24,7 +26,7 @@ CBI: A simple dummy section header without making a new section (aka using the n
 dv = s:option(DummyValue, "_dummy", translate("Section title?"), translate("I say things about stuff."))
 dv.template = "cbi/nullsection"
 ```
-	
+
 CBI: Validating all options on a page
 ====================================
 
@@ -44,8 +46,8 @@ NOTE: boolean options don't call a validate function
 
     function o.validate(self, value)
         if value < min then return nil end
-	    if value > max then return nil end
-		return value
+        if value > max then return nil end
+        return value
     end
 
 
@@ -90,7 +92,7 @@ The error structure looks like this:
         [section_id_1] = "Error message string",
         [section_id_2] = "Another error message"
     }
-    
+
 The format is the same for per-section and per-option errors. The variables section_id_1 andsection_id_2 are the uci identifiers of the
 underlying section e.g. "lan" for "config interface lan" and "cfg12ab23f" for "config foo" (anonymous section).
 
@@ -168,19 +170,19 @@ Save & Apply Hooks
 
 LuCI Trunk and the 0.9 branch offer hooks for that:
 
-**on_init**	   Before rendering the model
+**on_init**    Before rendering the model
 
 **on_parse**  Before writing the config
 
-**on_before_commit**		  Before writing the config
+**on_before_commit**          Before writing the config
 
-**on_after_commit**		  After writing the config
+**on_after_commit**       After writing the config
 
-**on_before_apply**		  Before restarting services
+**on_before_apply**       Before restarting services
 
-**on_after_apply**		  After restarting services
+**on_after_apply**        After restarting services
 
-**on_cancel**			  When the form was cancelled
+**on_cancel**             When the form was cancelled
 
 Use them like this:
 
@@ -258,18 +260,18 @@ Create a new view e.g. luasrc/view/cbi_timeval.htm like this
 ```
     <%+cbi/valueheader%>
 
-	<input type="text" class="cbi-input-text" onchange="cbi_d_update(this.id)"<%= attr("name", cbid .. ".hour") .. attr("id", cbid ..".hour") .. attr("value", (self:cfgvalue(section) or ""):match("(%d%d):%d%d")) %> />
-	:
-	<input type="text" class="cbi-input-text" onchange="cbi_d_update(this.id)"<%= attr("name", cbid .. ".min") .. attr("id", cbid ..".min") .. attr("value", (self:cfgvalue(section) or ""):match("%d%d:(%d%d)")) %> />
+    <input type="text" class="cbi-input-text" onchange="cbi_d_update(this.id)"<%= attr("name", cbid .. ".hour") .. attr("id", cbid ..".hour") .. attr("value", (self:cfgvalue(section) or ""):match("(%d%d):%d%d")) %> />
+    :
+    <input type="text" class="cbi-input-text" onchange="cbi_d_update(this.id)"<%= attr("name", cbid .. ".min") .. attr("id", cbid ..".min") .. attr("value", (self:cfgvalue(section) or ""):match("%d%d:(%d%d)")) %> />
 
-	<%+cbi/valuefooter%>
+    <%+cbi/valuefooter%>
 ```
 
 Important are the includes at the beggining and the end, and that the id, name and value attributes are correct. The rest can be adapted.
 
 ```(self:cfgvalue(section) or ""):match(".*:?(.*)") ```
-will only match the part of the config value behind the : 
-whereas 
+will only match the part of the config value behind the :
+whereas
 ```(self:cfgvalue(section) or ""):match("(.*):?.*") ```
 will only match the first part of the real config value.
 
@@ -295,7 +297,7 @@ Modifying cbi map buttons
 The buttons can be controlled through the "flow" property of a map. This
 value is not set in the model, but in the controller entry for that page.
 
-The options are: skip, autoapply, hidesavebtn, hideresetbtn, and hideapplybtn 
+The options are: skip, autoapply, hidesavebtn, hideresetbtn, and hideapplybtn
 
 **skip:** If true ADD the skip button.
 
@@ -347,7 +349,7 @@ CBI Form Values
 ----------------
 The parse functions for various CBI objects contain checks for various form_values. These values are used as conditionals for a variety of tasks. I will go over the values here and the conditions that cause them.
 
-**FORM_NODATA** 
+**FORM_NODATA**
 
 If on parse a http.formvalue() does not contain a "cbi.submit" value
 
@@ -359,7 +361,7 @@ Optional and dynamic options when parsed have a "proceed" option that will let t
 
 Set when a form has data and is neither invalid, or marked to proceed, and has not changed.
 
-**FORM_DONE	 =  1**
+**FORM_DONE  =  1**
 
 Set when the formvalue "cbi.cancel" is returned from a page and if the "on_cancel" hook function returns true. This is usually the second thing parsed on a form after "skip"
 
@@ -398,7 +400,7 @@ A function that is run at the end of the self.save chain of events. (see: parsin
 
 TODO: Test this to see what negative impacts it may have.
 TODO: see if you can set apply_on_parse=false in a on_before_apply command to not have to use apply_xhr.htm
-?TODO: replace apply_xhr in the map.htm to show a better application setting configuration to the user? 
+?TODO: replace apply_xhr in the map.htm to show a better application setting configuration to the user?
 
 Parsing CBI Values
 -------------------
@@ -436,8 +438,8 @@ Special (rarely used) CBI Value Types
 
 ```
 TextValue - A multi-line value
-	rows:	Rows
-	template
+    rows:   Rows
+    template
 
 TextValue = class(AbstractValue)
 ```
@@ -445,28 +447,28 @@ TextValue = class(AbstractValue)
 **Button**
 
 ```
-		inputstyle
-		rmempty
-		template
+        inputstyle
+        rmempty
+        template
 Button = class(AbstractValue)
 ```
 
 **FileUpload**
 
 ```
-		template
-		upload_fields
-		formcreated
-		formvalue
-		remobe
-		
+        template
+        upload_fields
+        formcreated
+        formvalue
+        remobe
+
 FileUpload = class(AbstractValue)
 ```
 
 **FileBrowser**
 
 ```
-		template
+        template
 
 FileBrowser = class(AbstractValue)
 ```
@@ -514,152 +516,152 @@ Delegator TODO
 ```
 Delegator = class(Node)
 function Delegator.__init__(self, ...)
-	Node.__init__(self, ...)
-	self.nodes = {}
-	self.defaultpath = {}
-	self.pageaction = false
-	self.readinput = true
-	self.allow_reset = false
-	self.allow_cancel = false
-	self.allow_back = false
-	self.allow_finish = false
-	self.template = "cbi/delegator"
+    Node.__init__(self, ...)
+    self.nodes = {}
+    self.defaultpath = {}
+    self.pageaction = false
+    self.readinput = true
+    self.allow_reset = false
+    self.allow_cancel = false
+    self.allow_back = false
+    self.allow_finish = false
+    self.template = "cbi/delegator"
 end
 
 function Delegator.set(self, name, node)
-	assert(not self.nodes[name], "Duplicate entry")
+    assert(not self.nodes[name], "Duplicate entry")
 
-	self.nodes[name] = node
+    self.nodes[name] = node
 end
 
 function Delegator.add(self, name, node)
-	node = self:set(name, node)
-	self.defaultpath[#self.defaultpath+1] = name
+    node = self:set(name, node)
+    self.defaultpath[#self.defaultpath+1] = name
 end
 
 function Delegator.insert_after(self, name, after)
-	local n = #self.chain + 1
-	for k, v in ipairs(self.chain) do
-		if v == after then
-			n = k + 1
-			break
-		end
-	end
-	table.insert(self.chain, n, name)
+    local n = #self.chain + 1
+    for k, v in ipairs(self.chain) do
+        if v == after then
+            n = k + 1
+            break
+        end
+    end
+    table.insert(self.chain, n, name)
 end
 
 function Delegator.set_route(self, ...)
-	local n, chain, route = 0, self.chain, {...}
-	for i = 1, #chain do
-		if chain[i] == self.current then
-			n = i
-			break
-		end
-	end
-	for i = 1, #route do
-		n = n + 1
-		chain[n] = route[i]
-	end
-	for i = n + 1, #chain do
-		chain[i] = nil
-	end
+    local n, chain, route = 0, self.chain, {...}
+    for i = 1, #chain do
+        if chain[i] == self.current then
+            n = i
+            break
+        end
+    end
+    for i = 1, #route do
+        n = n + 1
+        chain[n] = route[i]
+    end
+    for i = n + 1, #chain do
+        chain[i] = nil
+    end
 end
 
 function Delegator.get(self, name)
-	local node = self.nodes[name]
+    local node = self.nodes[name]
 
-	if type(node) == "string" then
-		node = load(node, name)
-	end
+    if type(node) == "string" then
+        node = load(node, name)
+    end
 
-	if type(node) == "table" and getmetatable(node) == nil then
-		node = Compound(unpack(node))
-	end
+    if type(node) == "table" and getmetatable(node) == nil then
+        node = Compound(unpack(node))
+    end
 
-	return node
+    return node
 end
 
 function Delegator.parse(self, ...)
-	if self.allow_cancel and Map.formvalue(self, "cbi.cancel") then
-		if self:_run_hooks("on_cancel") then
-			return FORM_DONE
-		end
-	end
+    if self.allow_cancel and Map.formvalue(self, "cbi.cancel") then
+        if self:_run_hooks("on_cancel") then
+            return FORM_DONE
+        end
+    end
 
-	if not Map.formvalue(self, "cbi.delg.current") then
-		self:_run_hooks("on_init")
-	end
+    if not Map.formvalue(self, "cbi.delg.current") then
+        self:_run_hooks("on_init")
+    end
 
-	local newcurrent
-	self.chain = self.chain or self:get_chain()
-	self.current = self.current or self:get_active()
-	self.active = self.active or self:get(self.current)
-	assert(self.active, "Invalid state")
+    local newcurrent
+    self.chain = self.chain or self:get_chain()
+    self.current = self.current or self:get_active()
+    self.active = self.active or self:get(self.current)
+    assert(self.active, "Invalid state")
 
-	local stat = FORM_DONE
-	if type(self.active) ~= "function" then
-		self.active:populate_delegator(self)
-		stat = self.active:parse()
-	else
-		self:active()
-	end
+    local stat = FORM_DONE
+    if type(self.active) ~= "function" then
+        self.active:populate_delegator(self)
+        stat = self.active:parse()
+    else
+        self:active()
+    end
 
-	if stat > FORM_PROCEED then
-		if Map.formvalue(self, "cbi.delg.back") then
-			newcurrent = self:get_prev(self.current)
-		else
-			newcurrent = self:get_next(self.current)
-		end
-	elseif stat < FORM_PROCEED then
-		return stat
-	end
+    if stat > FORM_PROCEED then
+        if Map.formvalue(self, "cbi.delg.back") then
+            newcurrent = self:get_prev(self.current)
+        else
+            newcurrent = self:get_next(self.current)
+        end
+    elseif stat < FORM_PROCEED then
+        return stat
+    end
 
 
-	if not Map.formvalue(self, "cbi.submit") then
-		return FORM_NODATA
-	elseif stat > FORM_PROCEED
-	and (not newcurrent or not self:get(newcurrent)) then
-		return self:_run_hook("on_done") or FORM_DONE
-	else
-		self.current = newcurrent or self.current
-		self.active = self:get(self.current)
-		if type(self.active) ~= "function" then
-			self.active:populate_delegator(self)
-			local stat = self.active:parse(false)
-			if stat == FORM_SKIP then
-				return self:parse(...)
-			else
-				return FORM_PROCEED
-			end
-		else
-			return self:parse(...)
-		end
-	end
+    if not Map.formvalue(self, "cbi.submit") then
+        return FORM_NODATA
+    elseif stat > FORM_PROCEED
+    and (not newcurrent or not self:get(newcurrent)) then
+        return self:_run_hook("on_done") or FORM_DONE
+    else
+        self.current = newcurrent or self.current
+        self.active = self:get(self.current)
+        if type(self.active) ~= "function" then
+            self.active:populate_delegator(self)
+            local stat = self.active:parse(false)
+            if stat == FORM_SKIP then
+                return self:parse(...)
+            else
+                return FORM_PROCEED
+            end
+        else
+            return self:parse(...)
+        end
+    end
 end
 
 function Delegator.get_next(self, state)
-	for k, v in ipairs(self.chain) do
-		if v == state then
-			return self.chain[k+1]
-		end
-	end
+    for k, v in ipairs(self.chain) do
+        if v == state then
+            return self.chain[k+1]
+        end
+    end
 end
 
 function Delegator.get_prev(self, state)
-	for k, v in ipairs(self.chain) do
-		if v == state then
-			return self.chain[k-1]
-		end
-	end
+    for k, v in ipairs(self.chain) do
+        if v == state then
+            return self.chain[k-1]
+        end
+    end
 end
 
 function Delegator.get_chain(self)
-	local x = Map.formvalue(self, "cbi.delg.path") or self.defaultpath
-	return type(x) == "table" and x or {x}
+    local x = Map.formvalue(self, "cbi.delg.path") or self.defaultpath
+    return type(x) == "table" and x or {x}
 end
 
 function Delegator.get_active(self)
-	return Map.formvalue(self, "cbi.delg.current") or self.chain[1]
+    return Map.formvalue(self, "cbi.delg.current") or self.chain[1]
 end
 ```
 
@@ -672,123 +674,123 @@ SimpleForm TODO
 SimpleForm = class(Node)
 
 function SimpleForm.__init__(self, config, title, description, data)
-	Node.__init__(self, title, description)
-	self.config = config
-	self.data = data or {}
-	self.template = "cbi/simpleform"
-	self.dorender = true
-	self.pageaction = false
-	self.readinput = true
+    Node.__init__(self, title, description)
+    self.config = config
+    self.data = data or {}
+    self.template = "cbi/simpleform"
+    self.dorender = true
+    self.pageaction = false
+    self.readinput = true
 end
 
 SimpleForm.formvalue = Map.formvalue
 SimpleForm.formvaluetable = Map.formvaluetable
 
 function SimpleForm.parse(self, readinput, ...)
-	self.readinput = (readinput ~= false)
+    self.readinput = (readinput ~= false)
 
-	if self:formvalue("cbi.skip") then
-		return FORM_SKIP
-	end
+    if self:formvalue("cbi.skip") then
+        return FORM_SKIP
+    end
 
-	if self:formvalue("cbi.cancel") and self:_run_hooks("on_cancel") then
-		return FORM_DONE
-	end
+    if self:formvalue("cbi.cancel") and self:_run_hooks("on_cancel") then
+        return FORM_DONE
+    end
 
-	if self:submitstate() then
-		Node.parse(self, 1, ...)
-	end
+    if self:submitstate() then
+        Node.parse(self, 1, ...)
+    end
 
-	local valid = true
-	for k, j in ipairs(self.children) do
-		for i, v in ipairs(j.children) do
-			valid = valid
-			 and (not v.tag_missing or not v.tag_missing[1])
-			 and (not v.tag_invalid or not v.tag_invalid[1])
-			 and (not v.error)
-		end
-	end
+    local valid = true
+    for k, j in ipairs(self.children) do
+        for i, v in ipairs(j.children) do
+            valid = valid
+             and (not v.tag_missing or not v.tag_missing[1])
+             and (not v.tag_invalid or not v.tag_invalid[1])
+             and (not v.error)
+        end
+    end
 
-	local state = not self:submitstate() and FORM_NODATA
-		or valid and FORM_VALID
-		or FORM_INVALID
+    local state = not self:submitstate() and FORM_NODATA
+        or valid and FORM_VALID
+        or FORM_INVALID
 
-	self.dorender = not self.handle
-	if self.handle then
-		local nrender, nstate = self:handle(state, self.data)
-		self.dorender = self.dorender or (nrender ~= false)
-		state = nstate or state
-	end
-	return state
+    self.dorender = not self.handle
+    if self.handle then
+        local nrender, nstate = self:handle(state, self.data)
+        self.dorender = self.dorender or (nrender ~= false)
+        state = nstate or state
+    end
+    return state
 end
 
 function SimpleForm.render(self, ...)
-	if self.dorender then
-		Node.render(self, ...)
-	end
+    if self.dorender then
+        Node.render(self, ...)
+    end
 end
 
 function SimpleForm.submitstate(self)
-	return self:formvalue("cbi.submit")
+    return self:formvalue("cbi.submit")
 end
 
 function SimpleForm.section(self, class, ...)
-	if instanceof(class, AbstractSection) then
-		local obj  = class(self, ...)
-		self:append(obj)
-		return obj
-	else
-		error("class must be a descendent of AbstractSection")
-	end
+    if instanceof(class, AbstractSection) then
+        local obj  = class(self, ...)
+        self:append(obj)
+        return obj
+    else
+        error("class must be a descendent of AbstractSection")
+    end
 end
 
 -- Creates a child field
 function SimpleForm.field(self, class, ...)
-	local section
-	for k, v in ipairs(self.children) do
-		if instanceof(v, SimpleSection) then
-			section = v
-			break
-		end
-	end
-	if not section then
-		section = self:section(SimpleSection)
-	end
+    local section
+    for k, v in ipairs(self.children) do
+        if instanceof(v, SimpleSection) then
+            section = v
+            break
+        end
+    end
+    if not section then
+        section = self:section(SimpleSection)
+    end
 
-	if instanceof(class, AbstractValue) then
-		local obj  = class(self, section, ...)
-		obj.track_missing = true
-		section:append(obj)
-		return obj
-	else
-		error("class must be a descendent of AbstractValue")
-	end
+    if instanceof(class, AbstractValue) then
+        local obj  = class(self, section, ...)
+        obj.track_missing = true
+        section:append(obj)
+        return obj
+    else
+        error("class must be a descendent of AbstractValue")
+    end
 end
 
 function SimpleForm.set(self, section, option, value)
-	self.data[option] = value
+    self.data[option] = value
 end
 
 
 function SimpleForm.del(self, section, option)
-	self.data[option] = nil
+    self.data[option] = nil
 end
 
 
 function SimpleForm.get(self, section, option)
-	return self.data[option]
+    return self.data[option]
 end
 
 
 function SimpleForm.get_scheme()
-	return nil
+    return nil
 end
 
 
 Form = class(SimpleForm)
 
 function Form.__init__(self, ...)
-	SimpleForm.__init__(self, ...)
-	self.embedded = true
+    SimpleForm.__init__(self, ...)
+    self.embedded = true
 end
 ```

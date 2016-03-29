@@ -1,3 +1,5 @@
+<p align="right"><a href="07-warnings.md">07-warnings.md &larr; </a> | <a href="09-LuCI-objects.md">&rarr; 09-LuCI-objects.md</a></p>
+
 The UCI system
 ===============
 
@@ -14,14 +16,14 @@ if you have a uci config that has sections with only section types and no stated
 
 ```
 config system
-	list affects 'luci_statistics'
-	option init 'avahi-daemon'
+    list affects 'luci_statistics'
+    option init 'avahi-daemon'
 
 config system
-	list affects 'luci_statistics'
-	option init 'pineapple'
+    list affects 'luci_statistics'
+    option init 'pineapple'
 ```
-	
+
 
 You can use the command line interface to modify only the first like this:
 
