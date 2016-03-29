@@ -1,3 +1,5 @@
+<p align="right"><a href="02-APIs.md">02-APIs.md &larr; </a> | <a href="04-model-cbi.md">&rarr; 04-model-cbi.md</a></p>
+
 The Index and Entry's
 =====================
 
@@ -12,7 +14,7 @@ Making a controller
 
 The Index Function
 -------------------
-The dispatcher calls the index function of a 
+The dispatcher calls the index function of a
 
 
 Entries
@@ -29,7 +31,7 @@ The Following config vallues are allowed:
 
 * on_success_to
 If set this will redirect to the node passed it upon a form value returning that it was valid, done, changed or skipped (see:cbi-form values)
-  
+
 * on_changed_to
 If set this will redirect to the node passed it upon a form value returning that it was changed or skipped (see:cbi-form values)
 
@@ -37,10 +39,10 @@ If set this will redirect to the node passed it upon a form value returning that
 If set this will redirect to the node passed it upon a form value returning that it was valid, or done (see:cbi-form values)
 
 * noheader
-If set this will cause a CBI page to be rendered without the CBI header (which contains the start of the form that all CBI values are contained within) and without the OpenWRT Theme header. 
+If set this will cause a CBI page to be rendered without the CBI header (which contains the start of the form that all CBI values are contained within) and without the OpenWRT Theme header.
 
 * nofooter
-If set this will cause a CBI page to be rendered without the CBI footer (which contains the CBI submission buttons) and without the OpenWRT Theme footer. 
+If set this will cause a CBI page to be rendered without the CBI footer (which contains the CBI submission buttons) and without the OpenWRT Theme footer.
 
 * autoapply
 

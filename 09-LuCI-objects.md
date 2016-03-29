@@ -1,3 +1,5 @@
+<p align="right"><a href="08-uci.md">08-uci.md &larr; </a>
+
 # Yasnippet LuCI snippets.
 
 See http://luci.subsignal.org/trac/wiki/Documentation for full LuCI documentation.

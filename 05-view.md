@@ -1,3 +1,6 @@
+<p align="right"><a href="04-model-cbi.md">04-model-cbi.md &larr; </a> | <a href="06-debugging.md">&rarr; 06-debugging.md</a></p>
+
+
 Templates and Views
 ===================
 
@@ -12,4 +15,3 @@ Please also see: examples/parsing_constants.lua
 
 
 Feel Free to take notes in this document and then send discreet pull requests for sections to me  for things that were important in understanding this as we go over the documentation.
-
