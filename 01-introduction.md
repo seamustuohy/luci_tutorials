@@ -44,7 +44,7 @@ The LuCI config file
 CBI
 ---
 
-CBI models are lua files that describe teh structure of a UCI vconfig file and the resulting HTML form to be evaluated by the CBi parser.
+CBI models are lua files that describe the structure of a UCI vconfig file and the resulting HTML form to be evaluated by the CBi parser.
 
 The main CBI parser is found in the luci directory.
 
