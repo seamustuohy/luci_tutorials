@@ -73,6 +73,22 @@ luci.dispatcher.indexcache = "/tmp/luci-indexcache" in /www/cgi-bin/luci .
 
     --luci.dispatcher.indexcache = "/tmp/luci-indexcache"
 
+Logger
+-----------------------
+
+Logs can be added to the Lua scripts for basic debugging by using `logger` - a shell command interface to the syslog. 
+
+Following is an example:
+
+   `local data=12345`
+   `luci.sys.exec("logger -t luci \"" .. tostring(data) .. '"')`
+    where  `data` can be any variable. 
+
+The logging output is sent to logread.
+   `# logread
+    user.notice luci: 12345`
+
+The other way of logging can be done by including Commotion_helpers module in your Lua script, which can be used to print tables, etc., this is explained in the next section.
 
 Commotion_helpers logger
 -----------------------
